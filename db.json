@@ -1,0 +1,208 @@
+{
+  "banks": [
+    {
+      "name": "Access Bank",
+      "code": "044",
+      "id": "14f6"
+    },
+    {
+      "name": "GTBank",
+      "code": "058",
+      "id": "27b6"
+    },
+    {
+      "name": "Zenith Bank",
+      "code": "057",
+      "id": "b30f"
+    },
+    {
+      "name": "First Bank",
+      "code": "011",
+      "id": "c491"
+    },
+    {
+      "name": "UBA",
+      "code": "033",
+      "id": "b765"
+    },
+    {
+      "name": "Fidelity Bank",
+      "code": "070",
+      "id": "b7e0"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "fullName": "John Doe",
+      "email": "john@example.com",
+      "phone": "08012345678",
+      "password": "password123",
+      "walletBalance": 67920,
+      "pin": "1234",
+      "accounts": [
+        {
+          "bankCode": "058",
+          "accountNumber": "1234567890"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "fullName": "Jane Smith",
+      "email": "jane@example.com",
+      "phone": "08098765432",
+      "password": "password123",
+      "walletBalance": 35362,
+      "pin": "1234",
+      "accounts": [
+        {
+          "bankCode": "044",
+          "accountNumber": "2222222222"
+        }
+      ]
+    },
+    {
+      "id": "c4ad",
+      "fullName": "Vivian Okonkwo",
+      "email": "viviantest2@gmail.com",
+      "phone": "09047829847",
+      "password": "viviantest2",
+      "walletBalance": 50000,
+      "pin": "1234",
+      "accounts": [
+        {
+          "bankCode": "070",
+          "accountNumber": "3457637489"
+        }
+      ]
+    },
+    {
+      "id": "8c5e",
+      "fullName": "vivian test3",
+      "email": "viviantest3@gmail.com",
+      "phone": "09083647388",
+      "password": "viviantest3",
+      "walletBalance": 50000,
+      "pin": "1234",
+      "accounts": [
+        {
+          "bankCode": "057",
+          "accountNumber": "2222222222"
+        }
+      ]
+    },
+    {
+      "id": "2f97",
+      "fullName": "Vivian test4",
+      "email": "viviantest4@gmail.com",
+      "phone": "09047264829",
+      "password": "viviantest4",
+      "walletBalance": 50000,
+      "pin": "1234",
+      "accounts": [
+        {
+          "bankCode": "011",
+          "accountNumber": "2345783940"
+        }
+      ]
+    },
+    {
+      "id": "126f",
+      "fullName": "Vivian test5",
+      "email": "viviantest5@gmail.com",
+      "phone": "09047364738",
+      "password": "viviantest5",
+      "walletBalance": 47700,
+      "pin": "1234",
+      "accounts": [
+        {
+          "bankCode": "033",
+          "accountNumber": "3849503847"
+        }
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "id": "07c5bca3-5cfb-4b53-875a-45128a8fff98",
+      "senderId": "2",
+      "receiverId": "1",
+      "amount": 1000,
+      "type": "transfer",
+      "description": "Transfer payment to John Doe",
+      "status": "completed",
+      "date": "2025-11-12T03:47:15.376Z"
+    },
+    {
+      "id": "ff42b0cd-0c9f-4d42-b411-1842d56791e2",
+      "senderId": "2",
+      "receiverId": "1",
+      "amount": 200,
+      "type": "bills",
+      "description": "water payment to John Doe",
+      "status": "completed",
+      "date": "2025-11-12T03:48:22.570Z"
+    },
+    {
+      "id": "3fc5edb5-d58c-4214-b3bd-04558296be35",
+      "senderId": "2",
+      "receiverId": "1",
+      "amount": 200,
+      "type": "transfer",
+      "description": "Transfer payment to John Doe",
+      "status": "completed",
+      "date": "2025-11-12T03:52:39.215Z"
+    },
+    {
+      "id": "1762921125076",
+      "senderId": "1",
+      "receiverId": "2",
+      "amount": 2000,
+      "type": "transfer",
+      "description": "Transfer payment to Jane Smith",
+      "status": "completed",
+      "date": "2025-11-12T04:18:45.076Z"
+    },
+    {
+      "id": "1762932514998",
+      "senderId": "1",
+      "receiverId": "2",
+      "amount": 2000,
+      "type": "transfer",
+      "description": "Transfer payment to Jane Smith",
+      "status": "completed",
+      "date": "2025-11-12T07:28:34.998Z"
+    },
+    {
+      "id": "1762932633934",
+      "senderId": "126f",
+      "receiverId": "1",
+      "amount": 2300,
+      "type": "transfer",
+      "description": "Transfer payment to John Doe",
+      "status": "completed",
+      "date": "2025-11-12T07:30:33.934Z"
+    },
+    {
+      "id": "40308d9d-64dd-48b3-8d05-f0d6da9bf884",
+      "senderId": "1",
+      "receiverId": "2",
+      "amount": 3000,
+      "type": "bills",
+      "description": "electricity payment to Jane Smith",
+      "status": "completed",
+      "date": "2025-11-12T07:32:44.857Z"
+    },
+    {
+      "id": "1762934067535",
+      "senderId": "1",
+      "receiverId": "2",
+      "amount": 1000,
+      "type": "bills",
+      "description": "electricity payment to Jane Smith",
+      "status": "completed",
+      "date": "2025-11-12T07:54:27.535Z"
+    }
+  ]
+}
