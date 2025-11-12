@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000";
+const API_URL = "https://mwallet-json-server.onrender.com";
 
 export async function getUserByEmail(email) {
   try {
