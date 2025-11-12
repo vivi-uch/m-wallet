@@ -8,6 +8,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [walletBalance, setWalletBalance] = useState(0);
   const [username, setUsername] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
@@ -18,6 +19,7 @@ const Dashboard = () => {
       if (user) {
         setWalletBalance(user.walletBalance || 0);
         setUsername(user.fullName.split(" ")[0]);
+        setAccountNumber(user.accounts?.[0]?.accountNumber || "");
       }
     });
 
@@ -37,7 +39,13 @@ const Dashboard = () => {
           <p className="text-sm text-gray-600">Account overview</p>
         </div>
 
-        <h2 className="text-xl font-semibold mb-4">Hello, {username}!</h2>
+        {/* <h2 className="text-xl font-semibold mb-4">Hello, {username}!</h2> */}
+        <h2 className="text-xl font-semibold mb-4 flex justify-between items-center">
+          <span>Hello, {username}!</span>
+          <span className="text-sm text-gray-600">
+            ACCOUNT NUMBER: {accountNumber}
+          </span>
+        </h2>
 
         <Card className="mb-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

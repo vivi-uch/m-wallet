@@ -51,7 +51,7 @@ export async function createUser(userData) {
       ...userData,
       id,
       walletBalance: 50000,
-      pin: "1234",
+      pin: accountNumber.slice(0, 4),
       accounts: [{ bankCode: randomBank.code, accountNumber }],
     };
 

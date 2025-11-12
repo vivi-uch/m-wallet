@@ -111,6 +111,11 @@ const Signup = () => {
               </div>
             ))}
 
+            <p className="text-xs text-gray-500 text-center">
+              Note: Your 4-digit PIN will be the first four digits of your
+              generated account number.
+            </p>
+
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating..." : "Sign Up"}
             </Button>
