@@ -177,6 +177,7 @@ const Transfer = () => {
                 value={formData.bank}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded"
+                required
               >
                 <option value="">Select a bank</option>
                 {banks.map((bank) => (
@@ -202,6 +203,7 @@ const Transfer = () => {
                 placeholder="1234567890"
                 inputMode="numeric"
                 maxLength={10}
+                required
               />
               {errors.accountNumber && (
                 <p className="text-sm text-red-600 mt-1">
@@ -222,6 +224,7 @@ const Transfer = () => {
                 className="w-full px-3 py-2 border rounded"
                 placeholder="0.00"
                 inputMode="decimal"
+                required
               />
               {errors.amount && (
                 <p className="text-sm text-red-600 mt-1">{errors.amount}</p>

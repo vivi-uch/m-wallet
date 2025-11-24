@@ -1,4 +1,7 @@
-const API_URL = "https://mwallet-json-server.onrender.com";
+// import PinModal from "../components/PinModal";
+
+// const API_URL = "https://mwallet-json-server.onrender.com";
+const API_URL = "http://localhost:3001";
 
 export async function getUserByEmail(email) {
   try {
@@ -51,7 +54,6 @@ export async function createUser(userData) {
       ...userData,
       id,
       walletBalance: 50000,
-      pin: accountNumber.slice(0, 4),
       accounts: [{ bankCode: randomBank.code, accountNumber }],
     };
 
@@ -155,6 +157,11 @@ export async function getTransactionsByUser(userId) {
 export async function getBanks() {
   try {
     const res = await fetch(`${API_URL}/banks`);
+    // if (bankCode) {
+    //   return res.ok
+    //     ? await res.json().filter((bank) => bank.code === bankCode)
+    //     : [];
+    // }
     return res.ok ? await res.json() : [];
   } catch {
     return [];

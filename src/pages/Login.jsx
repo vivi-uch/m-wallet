@@ -91,6 +91,7 @@ const Login = ({ setUser }) => {
                   value={formData[field.name]}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded"
+                  required
                 />
                 {errors[field.name] && (
                   <p className="text-sm text-red-600 mt-1">

@@ -29,7 +29,9 @@ function App() {
     const userId = sessionStorage.getItem("userId");
 
     if (userId) {
-      getUserById(parseInt(userId)).then((userData) => {
+      // userId is stored as a string (may be a UUID). Don't convert to number
+      // with parseInt — that truncates UUIDs (e.g. "9aa..." becomes 9)
+      getUserById(userId).then((userData) => {
         if (userData) {
           setUser(userData);
         }

@@ -121,6 +121,21 @@
           "accountNumber": "3849503847"
         }
       ]
+    },
+    {
+      "id": "773a8689-4cf3-47cf-889b-218fbdd233e4",
+      "fullName": "Mayowa Ekundayo",
+      "email": "mayowa@gmail.com",
+      "phone": "09023334232",
+      "password": "mayowa123",
+      "walletBalance": 50000,
+      "pin": "4905",
+      "accounts": [
+        {
+          "bankCode": "033",
+          "accountNumber": "4905371402"
+        }
+      ]
     }
   ],
   "transactions": [

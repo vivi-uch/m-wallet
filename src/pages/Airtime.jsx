@@ -13,10 +13,10 @@ import "react-toastify/dist/ReactToastify.css";
 import PinModal from "../components/PinModal";
 
 const networks = [
-  { id: "mtn", name: "MTN" },
-  { id: "airtel", name: "Airtel" },
-  { id: "glo", name: "Glo" },
-  { id: "9mobile", name: "9mobile" },
+  { id: "mtn", name: "MTN", color: "bg-yellow-100" },
+  { id: "airtel", name: "Airtel", color: "bg-red-100" },
+  { id: "glo", name: "Glo", color: "bg-green-100" },
+  { id: "9mobile", name: "9mobile", color: "bg-green-200" },
 ];
 
 const Airtime = () => {
@@ -137,6 +137,7 @@ const Airtime = () => {
                 name="phone"
                 className="w-full p-2 border rounded"
                 placeholder="Enter phone number"
+                required
               />
               <p className="text-sm uppercase mt-1">{phoneName}</p>
             </div>
@@ -148,10 +149,15 @@ const Airtime = () => {
                 onChange={handleChange}
                 name="network"
                 className="w-full p-2 border rounded"
+                required
               >
                 <option value="">Select network</option>
                 {networks.map((network) => (
-                  <option key={network.id} value={network.id}>
+                  <option
+                    key={network.id}
+                    value={network.id}
+                    className={`p-1 ${network.color}`}
+                  >
                     {network.name}
                   </option>
                 ))}
@@ -168,6 +174,7 @@ const Airtime = () => {
                 className="w-full p-2 border rounded"
                 placeholder="0.00"
                 min="1"
+                required
               />
             </div>
 

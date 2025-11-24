@@ -23,6 +23,12 @@ const Inputfields = [
     placeholder: "Confirm password",
     type: "password",
   },
+  {
+    name: "pin",
+    label: "Security PIN",
+    placeholder: "4-digit PIN",
+    type: "password",
+  },
 ];
 
 const Signup = () => {
@@ -34,10 +40,16 @@ const Signup = () => {
     phone: "",
     password: "",
     confirmPassword: "",
+    pin: "",
   });
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleToggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,6 +68,8 @@ const Signup = () => {
       err.password = "Password min 6 chars";
     if (formData.password !== formData.confirmPassword)
       err.confirmPassword = "Passwords do not match";
+    if (!formData.pin || formData.pin.length !== 4)
+      err.pin = "PIN must be 4 digits";
     setErrors(err);
     return Object.keys(err).length === 0;
   };
@@ -80,6 +94,7 @@ const Signup = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
       <ToastContainer position="top-center" autoClose={4000} />
+
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <div className="bg-purple-600 text-white rounded-md w-12 h-12 mx-auto flex items-center justify-center font-bold">
@@ -97,12 +112,29 @@ const Signup = () => {
                 </label>
                 <input
                   name={field.name}
-                  type={field.type || "text"}
+                  // type={field.type || "text"}
+                  type={
+                    field.type === "password"
+                      ? showPassword
+                        ? "text"
+                        : "password"
+                      : field.type || "text"
+                  }
                   placeholder={field.placeholder}
                   value={formData[field.name]}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded"
+                  required
                 />
+                {field.type === "password" && (
+                  <button
+                    type="button"
+                    onClick={handleToggleShowPassword}
+                    className="ml-2 text-sm text-purple-600"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                )}
                 {errors[field.name] && (
                   <p className="text-sm text-red-600 mt-1">
                     {errors[field.name]}
@@ -110,11 +142,6 @@ const Signup = () => {
                 )}
               </div>
             ))}
-
-            <p className="text-xs text-gray-500 text-center">
-              Note: Your 4-digit PIN will be the first four digits of your
-              generated account number.
-            </p>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating..." : "Sign Up"}

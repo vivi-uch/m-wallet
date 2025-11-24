@@ -171,6 +171,7 @@ const Bills = () => {
                 onChange={handleChange}
                 name="billType"
                 className="w-full p-2 border rounded"
+                required
               >
                 <option value="">Select type</option>
                 {bills.map((b) => (
@@ -188,6 +189,7 @@ const Bills = () => {
                 value={formData.bank}
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
+                required
               >
                 <option value="">Select a bank</option>
                 {banks.map((bank) => (
@@ -207,6 +209,7 @@ const Bills = () => {
                 name="accountId"
                 className="w-full p-2 border rounded"
                 placeholder="Enter number"
+                required
               />
               <p className="text-sm uppercase mt-1">{accountName}</p>
             </div>
@@ -221,6 +224,7 @@ const Bills = () => {
                 className="w-full p-2 border rounded"
                 placeholder="0.00"
                 min="1"
+                required
               />
             </div>
 
