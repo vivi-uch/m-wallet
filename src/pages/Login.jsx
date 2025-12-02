@@ -27,6 +27,10 @@ const Login = ({ setUser }) => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const handleToggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,7 +60,7 @@ const Login = ({ setUser }) => {
         setUser(user);
         navigate("/dashboard");
       } else {
-        toast.error("Invalid email or password");
+        toast.error("Invalid email or password don't match");
       }
     } catch (err) {
       toast.error("Error logging in");
@@ -80,19 +84,34 @@ const Login = ({ setUser }) => {
         <Card>
           <form onSubmit={handleSubmit} className="space-y-4">
             {Inputfields.map((field) => (
-              <div key={field.name}>
+              <div key={field.name} className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {field.label}
                 </label>
                 <input
                   name={field.name}
-                  type={field.type}
+                  type={
+                    field.type === "password"
+                      ? showPassword
+                        ? "text"
+                        : "password"
+                      : field.type
+                  }
                   placeholder={field.placeholder}
                   value={formData[field.name]}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded"
                   required
                 />
+                {field.type === "password" && (
+                  <button
+                    type="button"
+                    onClick={handleToggleShowPassword}
+                    className="ml-2 text-sm text-purple-600 absolute right-2 top-8"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                )}
                 {errors[field.name] && (
                   <p className="text-sm text-red-600 mt-1">
                     {errors[field.name]}

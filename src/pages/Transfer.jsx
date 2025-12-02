@@ -8,6 +8,7 @@ import {
   getUserByAccount,
   addTransaction,
   getBanks,
+  fetchAllUsers,
 } from "../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,6 +28,8 @@ const Transfer = () => {
   const [accountName, setAccountName] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [banks, setBanks] = useState([]);
+  const [Allusers, setAllUsers] = useState([]);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     getBanks().then(setBanks);
@@ -35,6 +38,7 @@ const Transfer = () => {
     getUserById(userId).then((user) => {
       if (user) setBalance(Number(user.walletBalance || 0));
     });
+    fetchAllUsers().then(setAllUsers);
   }, []);
 
   const handleChange = (e) => {
@@ -50,10 +54,33 @@ const Transfer = () => {
     }
   };
 
+  const handleSelectedUserChange = (e) => {
+    const selectedID = e.target.value;
+    const user = Allusers.find((u) => u.id === selectedID);
+
+    setFormData((prev) => ({
+      ...prev,
+      bank: user?.accounts[0]?.bankCode || " ",
+      accountNumber: user?.accounts[0]?.accountNumber || " ",
+    }));
+
+    if (user) {
+      findAccountName(
+        user?.accounts[0]?.bankCode,
+        user?.accounts[0]?.accountNumber
+      );
+    }
+  };
+
   const findAccountName = async (bankCode, acct) => {
     const receiver = await getUserByAccount(bankCode, acct);
-    if (receiver) setAccountName(receiver.fullName);
-    else setAccountName("Account not found");
+    if (receiver) {
+      setAccountName(receiver.fullName);
+      setIsError(false);
+    } else {
+      setAccountName("Account Number don't exist, check beneficiary");
+      setIsError(true);
+    }
   };
 
   const validate = () => {
@@ -76,6 +103,10 @@ const Transfer = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
+    if (isError) {
+      toast.error("Check all fields for Error");
+      return;
+    }
     setShowPin(true);
   };
 
@@ -127,7 +158,7 @@ const Transfer = () => {
         receiverId: receiverUser.id,
         amount,
         type: "transfer",
-        description: `Transfer payment to ${receiverUser.fullName}`,
+        description: `${receiverUser.fullName}`,
         status: "completed",
         date: new Date().toISOString(),
       };
@@ -181,7 +212,7 @@ const Transfer = () => {
               >
                 <option value="">Select a bank</option>
                 {banks.map((bank) => (
-                  <option key={bank.code} value={bank.code}>
+                  <option key={bank.code} value={bank.code} name="bank">
                     {bank.name}
                   </option>
                 ))}
@@ -210,7 +241,21 @@ const Transfer = () => {
                   {errors.accountNumber}
                 </p>
               )}
-              <p className="text-sm uppercase mt-1">{accountName}</p>
+              <div className=" flex justify-between items-center mt-1">
+                <p className="text-sm uppercase mt-1">{accountName}</p>
+                <select
+                  onChange={handleSelectedUserChange}
+                  className="text-white bg-purple-600 p-1 rounded-sm text-xs"
+                >
+                  <option value="">Select Beneficiary</option>
+
+                  {Allusers?.map((user) => (
+                    <option key={user.id} value={user.id} className="uppercase">
+                      {user.fullName}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div>

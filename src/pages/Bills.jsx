@@ -8,6 +8,7 @@ import {
   getUserByAccount,
   addTransaction,
   getBanks,
+  fetchAllUsers,
 } from "../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -31,9 +32,12 @@ const Bills = () => {
   const [accountName, setAccountName] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [banks, setBanks] = useState([]);
+  const [Allusers, setAllUsers] = useState([]);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     getBanks().then(setBanks);
+    fetchAllUsers().then(setAllUsers);
   }, []);
 
   const handleChange = (e) => {
@@ -48,10 +52,32 @@ const Bills = () => {
     }
   };
 
+  const handleSelectedUserChange = (e) => {
+    const selectedID = e.target.value;
+    const user = Allusers.find((u) => u.id === selectedID);
+
+    setFormData((prev) => ({
+      ...prev,
+      bank: user?.accounts[0]?.bankCode || " ",
+      accountNumber: user?.accounts[0]?.accountNumber || " ",
+    }));
+
+    if (user) {
+      findAccountName(
+        user?.accounts[0]?.bankCode,
+        user?.accounts[0]?.accountNumber
+      );
+    }
+  };
   const findAccountName = async (bankCode, acct) => {
     const receiver = await getUserByAccount(bankCode, acct);
-    if (receiver) setAccountName(receiver.fullName);
-    else setAccountName("Invalid account number");
+    if (receiver) {
+      setAccountName(receiver.fullName);
+      setIsError(false);
+    } else {
+      setAccountName("Account Number don't exist, check beneficiary");
+      setIsError(true);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -64,6 +90,10 @@ const Bills = () => {
     )
       return toast.error("Account number must be 10 digits");
     if (!formData.amount) return toast.error("Enter amount");
+    if (isError) {
+      toast.error("Check all fields for Error");
+      return;
+    }
     setShowPin(true);
   };
 
@@ -119,8 +149,8 @@ const Bills = () => {
         senderId: currentUser.id,
         receiverId: receiverUser.id,
         amount,
-        type: "bills",
-        description: `${formData.billType} payment to ${receiverUser.fullName}`,
+        type: `${formData.billType}`,
+        description: ` ${receiverUser.fullName}`,
         status: "completed",
         date: new Date().toISOString(),
       };
@@ -209,9 +239,24 @@ const Bills = () => {
                 name="accountId"
                 className="w-full p-2 border rounded"
                 placeholder="Enter number"
+                maxLength={10}
                 required
               />
-              <p className="text-sm uppercase mt-1">{accountName}</p>
+              <div className=" flex justify-between items-center mt-1">
+                <p className="text-sm uppercase mt-1">{accountName}</p>
+                <select
+                  onChange={handleSelectedUserChange}
+                  className="text-white bg-purple-600 p-1 rounded-sm text-xs"
+                >
+                  <option value="">Select Beneficiary</option>
+
+                  {Allusers?.map((user) => (
+                    <option key={user.id} value={user.id} className="uppercase">
+                      {user.fullName}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div>

@@ -58,6 +58,10 @@ const Dashboard = () => {
     ? userbank.find((bank) => bank.code === bankcodes)
     : "";
 
+  // const handleGenerateReceipt = (transaction) => () => {
+  //   const isDebit = transaction.senderId === sessionStorage.getItem("userId");
+  // };
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -78,7 +82,10 @@ const Dashboard = () => {
         <Card className="mb-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
-              <p className="text-sm text-gray-500">Balance</p>
+              <div className="flex gap-3 relative">
+                <p className="text-sm text-gray-500">Balance</p>
+              </div>
+
               <div className="text-3xl font-bold">
                 ₦{Number(walletBalance).toLocaleString()}
               </div>
@@ -103,61 +110,59 @@ const Dashboard = () => {
             <p className="text-gray-600">No transactions yet.</p>
           ) : (
             <ul className="space-y-3">
-              {visibleTransactions
-                // .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .map((transaction) => {
-                  const isDebit =
-                    transaction.senderId === sessionStorage.getItem("userId");
-                  return (
-                    <li
-                      key={transaction.id}
-                      className="flex items-center justify-between border rounded p-3"
-                    >
-                      <div>
-                        <div className="text-sm text-gray-700 font-medium">
-                          {transaction.description}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {new Date(transaction.date).toLocaleString()}
-                        </div>
+              {visibleTransactions.map((transaction) => {
+                const isDebit =
+                  transaction.senderId === sessionStorage.getItem("userId");
+                return (
+                  <li
+                    key={transaction.id}
+                    className="flex items-center justify-between border rounded p-3"
+                    // onClick={handleGenerateReceipt(transaction)}
+                  >
+                    <div>
+                      <div className="text-sm text-gray-700 font-medium capitalize">
+                        {transaction.type} payment made
+                        {isDebit ? " to" : " from"} {transaction.description}
                       </div>
-                      <div className="text-right">
-                        <div
-                          className={`font-semibold ${
-                            isDebit ? "text-red-600" : "text-green-600"
-                          }`}
-                        >
-                          {isDebit
-                            ? `-₦${Number(transaction.amount).toLocaleString()}`
-                            : `+₦${Number(
-                                transaction.amount
-                              ).toLocaleString()}`}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {transaction.status}
-                        </div>
+                      <div className="text-xs text-gray-500">
+                        {new Date(transaction.date).toLocaleString()}
                       </div>
-                    </li>
-                  );
-                })}
+                    </div>
+                    <div className="text-right">
+                      <div
+                        className={`font-semibold ${
+                          isDebit ? "text-red-600" : "text-green-600"
+                        }`}
+                      >
+                        {isDebit
+                          ? `-₦${Number(transaction.amount).toLocaleString()}`
+                          : `+₦${Number(transaction.amount).toLocaleString()}`}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {transaction.status}
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
 
           <div className="flex justify-end gap-4 items-center mt-4">
-            <button
-              className="p-2 bg-purple-500 text-white rounded-sm"
+            <Button
               onClick={handlePrevPage}
-              disabled={currPage === 1}
+              disabled={currPage === 1 ? true : false}
             >
+              {/* &lt; */}
               Prev
-            </button>
-            <button
-              className="p-2 bg-purple-500 text-white rounded-sm"
+            </Button>
+            <Button
               onClick={handleNextPage}
-              // disabled={}
+              disabled={transactions.length <= currPage * itemsperPage}
             >
+              {/* &gt; */}
               Next
-            </button>
+            </Button>
           </div>
         </Card>
       </div>

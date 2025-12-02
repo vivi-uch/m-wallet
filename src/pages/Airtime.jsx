@@ -12,13 +12,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PinModal from "../components/PinModal";
 
-const networks = [
-  { id: "mtn", name: "MTN", color: "bg-yellow-100" },
-  { id: "airtel", name: "Airtel", color: "bg-red-100" },
-  { id: "glo", name: "Glo", color: "bg-green-100" },
-  { id: "9mobile", name: "9mobile", color: "bg-green-200" },
-];
-
 const Airtime = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -29,12 +22,17 @@ const Airtime = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [phoneName, setPhoneName] = useState("");
   const [showPin, setShowPin] = useState(false);
+  const [network, setNetwork] = useState("");
 
   useEffect(() => {}, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "phone" && value.length === 11) {
+      findPhoneName(formData.phone);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -71,12 +69,7 @@ const Airtime = () => {
         return;
       }
 
-      const receiverphone = await getUserByPhone(formData.phone);
-      if (receiverphone) {
-        setPhoneName(receiverphone.fullName);
-      } else {
-        setPhoneName("Phone number doesn't exist");
-      }
+      // console.log("receiverphone", receiverphone);
 
       await updateUserBalance(
         currentUser.id,
@@ -88,7 +81,7 @@ const Airtime = () => {
         userId: currentUser.id,
         amount,
         type: "airtime",
-        description: `Airtime payment to ${formData.phone}`,
+        description: ` ${formData.phone}`,
         status: "completed",
         date: new Date().toISOString(),
       };
@@ -103,6 +96,17 @@ const Airtime = () => {
       toast.error("Purchase failed");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const findPhoneName = async (phoneNumber) => {
+    const receiverphone = await getUserByPhone(phoneNumber);
+    if (receiverphone) {
+      setPhoneName(receiverphone.fullName);
+      setNetwork(receiverphone.network);
+    } else {
+      setPhoneName("Phone number doesn't exist");
+      setNetwork("");
     }
   };
 
@@ -137,6 +141,7 @@ const Airtime = () => {
                 name="phone"
                 className="w-full p-2 border rounded"
                 placeholder="Enter phone number"
+                maxLength={11}
                 required
               />
               <p className="text-sm uppercase mt-1">{phoneName}</p>
@@ -144,24 +149,13 @@ const Airtime = () => {
 
             <div>
               <label className="block mb-1">Network</label>
-              <select
-                value={formData.network}
+              <input
+                value={network}
                 onChange={handleChange}
                 name="network"
                 className="w-full p-2 border rounded"
-                required
-              >
-                <option value="">Select network</option>
-                {networks.map((network) => (
-                  <option
-                    key={network.id}
-                    value={network.id}
-                    className={`p-1 ${network.color}`}
-                  >
-                    {network.name}
-                  </option>
-                ))}
-              </select>
+                readOnly
+              />
             </div>
 
             <div>
