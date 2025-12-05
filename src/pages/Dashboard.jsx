@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import Card from "../components/Card";
 import { getUserById, getAllTransactions, getBanks } from "../utils/api";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Dashboard = () => {
   const [transactions, setTransactions] = useState([]);
   const [userbank, setUserBank] = useState("");
   const [bankcodes, setBankCodes] = useState();
+  const [showBalance, setShowBalance] = useState(false);
 
   const [currPage, setCurrPage] = useState(1);
   const itemsperPage = 3;
@@ -63,34 +65,49 @@ const Dashboard = () => {
   // };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="mb-8 flex flex-col gap-2">
+        <div className="mb-8 sm:mb-6 flex flex-row justify-between items-center">
           <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-md text-gray-600">Account overview</p>
+          <p className="text-md text-gray-700 hidden md:flex">
+            Account overview
+          </p>
         </div>
 
         {/* <h2 className="text-xl font-semibold mb-4">Hello, {username}!</h2> */}
-        <h2 className="text-xl font-semibold mb-4 flex justify-between items-center">
-          <span>Hello, {username}!</span>
-          <span className="text-sm text-gray-600 uppercase">
-            account details: {chosenBank ? chosenBank.name : "none"}{" "}
-            {accountNumber}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center md-8 sm:mb-4 text-purple-600">
+          <h2 className="text-xl sm:text-2xl font-semibold">
+            Hello, {username}!
+          </h2>
+          <span className="text-sm sm:text-base mt-1 sm:mt-0 uppercase">
+            Account: {chosenBank ? chosenBank.name : "none"} {accountNumber}
           </span>
-        </h2>
+        </div>
 
-        <Card className="mb-6">
+        <Card className="mb-6 p-4 sm:p-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
-              <div className="flex gap-3 relative">
+              <div className="flex gap-3 items-center">
                 <p className="text-sm text-gray-500">Balance</p>
+                <button
+                  onClick={() => setShowBalance(!showBalance)}
+                  className="inline-flex"
+                >
+                  {showBalance ? (
+                    <FaEye className="text-gray-400 text-sm" />
+                  ) : (
+                    <FaEyeSlash className="text-gray-400 text-sm" />
+                  )}
+                </button>
               </div>
 
-              <div className="text-3xl font-bold">
-                ₦{Number(walletBalance).toLocaleString()}
+              <div className="text-2xl sm:text-3xl font-bold">
+                {showBalance
+                  ? "****"
+                  : `₦${Number(walletBalance).toLocaleString()}`}
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               <Button onClick={() => navigate("/transfer")}>Transfer</Button>
               <Button onClick={() => navigate("/airtime")}>Airtime</Button>
               <Button onClick={() => navigate("/bills")}>Bills</Button>
@@ -99,9 +116,11 @@ const Dashboard = () => {
         </Card>
 
         <Card>
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Transaction history</h3>
-            <div className="text-sm text-gray-600">
+          <div className="mb-5 sm:mb-4 flex items-center justify-between">
+            <h3 className="text-md sm:text-lg font-semibold">
+              Transaction history
+            </h3>
+            <div className="text-xs sm:text-sm text-gray-600">
               {transactions.length} items
             </div>
           </div>
@@ -109,26 +128,26 @@ const Dashboard = () => {
           {transactions.length === 0 ? (
             <p className="text-gray-600">No transactions yet.</p>
           ) : (
-            <ul className="space-y-3">
+            <ul className="space-y-2 sm:space-y-3">
               {visibleTransactions.map((transaction) => {
                 const isDebit =
                   transaction.senderId === sessionStorage.getItem("userId");
                 return (
                   <li
                     key={transaction.id}
-                    className="flex items-center justify-between border rounded p-3"
+                    className="flex items-center justify-between border border-purple-900 rounded p-3"
                     // onClick={handleGenerateReceipt(transaction)}
                   >
                     <div>
-                      <div className="text-sm text-gray-700 font-medium capitalize">
+                      <div className="text-xs sm:text-sm text-gray-700 font-medium capitalize">
                         {transaction.type} payment made
                         {isDebit ? " to" : " from"} {transaction.description}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-[10px] sm:text-xs text-gray-500">
                         {new Date(transaction.date).toLocaleString()}
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right text-xs sm:text-lg">
                       <div
                         className={`font-semibold ${
                           isDebit ? "text-red-600" : "text-green-600"
@@ -138,7 +157,7 @@ const Dashboard = () => {
                           ? `-₦${Number(transaction.amount).toLocaleString()}`
                           : `+₦${Number(transaction.amount).toLocaleString()}`}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-[10px] text-gray-500">
                         {transaction.status}
                       </div>
                     </div>
