@@ -1,7 +1,9 @@
 // import PinModal from "../components/PinModal";
 
-// const API_URL = "https://mwallet-json-server.onrender.com";
-const API_URL = "http://localhost:3001";
+
+const API_URL = "https://mwallet-server.onrender.com";
+// console.log("API URL:", API_URL);
+// const API_URL = "http://localhost:3001";
 // const API_URL = "https://mwallet-server-production.up.railway.app";
 
 export async function getUserByEmail(email) {

@@ -17,9 +17,9 @@ import Bills from "./pages/Bills";
 import { getUserById } from "./utils/api";
 import { toast } from "react-toastify";
 
-// Session timeout configuration (30 minutes)
-const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
-const IDLE_CHECK_INTERVAL = 60000; // Check every minute
+
+const SESSION_TIMEOUT = 3 * 60 * 1000; 
+const IDLE_CHECK_INTERVAL = 60000; 
 
 const ProtectedRoute = ({ children }) => {
   const userId = sessionStorage.getItem("userId");
@@ -133,7 +133,6 @@ function App() {
     return saved ? JSON.parse(saved) : false;
   });
 
-  // Dark mode toggle - using Tailwind class on documentElement
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -147,12 +146,11 @@ function App() {
     setDarkMode((prev) => !prev);
   };
 
+
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
 
     if (userId) {
-      // userId is stored as a string (may be a UUID). Don't convert to number
-      // with parseInt — that truncates UUIDs (e.g. "9aa..." becomes 9)
       getUserById(userId).then((userData) => {
         if (userData) {
           setUser(userData);

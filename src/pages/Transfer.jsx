@@ -145,11 +145,11 @@ const Transfer = () => {
 
       await updateUserBalance(
         currentUser.id,
-        currentUser.walletBalance - amount
+        `${currentUser.id !== receiverUser.id ? currentUser.walletBalance - amount : currentUser.walletBalance}`
       );
       await updateUserBalance(
         receiverUser.id,
-        receiverUser.walletBalance + amount
+        `${currentUser.id !== receiverUser.id ? receiverUser.walletBalance + amount : receiverUser.walletBalance}`
       );
 
       const transaction = {
@@ -160,10 +160,17 @@ const Transfer = () => {
         receiverName: receiverUser.fullName,
         amount,
         type: "transfer",
-
         status: "completed",
         date: new Date().toISOString(),
       };
+
+
+      if (currentUser.id === receiverUser.id) {
+        toast.info("Impossible!, You can't transfer to your own account", {
+          onClose: () => navigate("/dashboard"),
+        });
+        return;
+      }
 
       await addTransaction(transaction);
 

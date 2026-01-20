@@ -27,12 +27,18 @@ const Airtime = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [isError, setIsError] = useState(false);
+  const [balance, setBalance] = useState(0); 
 
   useEffect(() => {
     fetchAllUsers().then((users) => {
       const usersWithPhone = users.filter((u) => u.phone);
       setAllUsers(usersWithPhone);
       setFilteredUsers(usersWithPhone);
+    });
+    const userId = sessionStorage.getItem("userId");
+    if (!userId) return;
+    getUserById(userId).then((user) => {
+      if (user) setBalance(Number(user.walletBalance || 0));
     });
   }, []);
 
@@ -100,7 +106,13 @@ const Airtime = () => {
     if (formData.phone.length !== 11 || !/^\d{11}$/.test(formData.phone))
       return toast.error("Phone number must be 11 digits");
     if (!formData.network) return toast.error("Select network");
+
+    const amt = parseFloat(formData.amount);
+ 
     if (!formData.amount) return toast.error("Enter amount");
+    else if (isNaN(amt) || amt <= 0) return toast.error("Enter a valid amount");
+    else if (amt > balance) return toast.error("Insufficient balance");
+   
     if (isError) {
       toast.error("Check all fields for errors");
       return;
@@ -193,6 +205,9 @@ const Airtime = () => {
             Back
           </button>
           <h1 className="text-2xl font-bold dark:text-white">Buy Airtime</h1>
+           <p className="text-sm text-gray-600 dark:text-gray-400">
+            Balance: ₦{Number(balance).toLocaleString()}
+          </p>
         </div>
 
         <Card>

@@ -24,7 +24,7 @@ const Bills = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     billType: "",
-    accountId: "",
+    accountNumber: "",
     amount: "",
     bank: "",
   });
@@ -34,9 +34,16 @@ const Bills = () => {
   const [banks, setBanks] = useState([]);
   const [Allusers, setAllUsers] = useState([]);
   const [isError, setIsError] = useState(false);
+  const [balance, setBalance] = useState(0);
 
   useEffect(() => {
     getBanks().then(setBanks);
+    const userId = sessionStorage.getItem("userId");
+    if (!userId) return;
+    
+    getUserById(userId).then((user) => {
+      if (user) setBalance(Number(user.walletBalance || 0));
+    });
     fetchAllUsers().then(setAllUsers);
   }, []);
 
@@ -44,11 +51,11 @@ const Bills = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    if (name === "accountId" && value.length === 10 && formData.bank) {
+    if (name === "accountNumber" && value.length === 10 && formData.bank) {
       findAccountName(formData.bank, value);
     }
-    if (name === "bank" && formData.accountId.length === 10) {
-      findAccountName(value, formData.accountId);
+    if (name === "bank" && formData.accountNumber.length === 10) {
+      findAccountName(value, formData.accountNumber);
     }
   };
 
@@ -69,6 +76,7 @@ const Bills = () => {
       );
     }
   };
+
   const findAccountName = async (bankCode, acct) => {
     const receiver = await getUserByAccount(bankCode, acct);
     if (receiver) {
@@ -83,13 +91,17 @@ const Bills = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.billType) return toast.error("Select bill type");
-    if (!formData.accountId) return toast.error("Account number is required");
+    if (!formData.accountNumber) return toast.error("Account number is required");
     if (
-      formData.accountId.length !== 10 ||
-      !/^\d{10}$/.test(formData.accountId)
+      formData.accountNumber.length !== 10 ||
+      !/^\d{10}$/.test(formData.accountNumber)
     )
       return toast.error("Account number must be 10 digits");
+
+    const amt = parseFloat(formData.amount);
     if (!formData.amount) return toast.error("Enter amount");
+     else if (isNaN(amt) || amt <= 0) return toast.error("Enter a valid amount");
+    else if (amt > balance) return toast.error("Insufficient balance");
     if (isError) {
       toast.error("Check all fields for Error");
       return;
@@ -127,7 +139,7 @@ const Bills = () => {
 
       const receiverUser = await getUserByAccount(
         formData.bank,
-        formData.accountId
+        formData.accountNumber
       );
       if (!receiverUser) {
         setAccountName("Receiver account not found");
@@ -136,11 +148,11 @@ const Bills = () => {
       }
 
       const newReceiverBalance =
-        Number(receiverUser.walletBalance || 0) + amount;
+        `${currentUser.id !== receiverUser.id ? Number(receiverUser.walletBalance || 0) + amount : receiverUser.walletBalance}`;
 
       await updateUserBalance(
         currentUser.id,
-        Number(currentUser.walletBalance || 0) - amount
+        `${currentUser.id !== receiverUser.id ? Number(currentUser.walletBalance || 0) - amount : currentUser.walletBalance}`
       );
       await updateUserBalance(receiverUser.id, newReceiverBalance);
 
@@ -155,6 +167,13 @@ const Bills = () => {
         status: "completed",
         date: new Date().toISOString(),
       };
+
+      if (currentUser.id === receiverUser.id) {
+        toast.info("Impossible!, You can't transfer to your own account", {
+          onClose: () => navigate("/dashboard"),
+      });
+      return;
+      }
 
       await addTransaction(transaction);
 
@@ -190,6 +209,9 @@ const Bills = () => {
             Back
           </button>
           <h1 className="text-2xl font-bold dark:text-white">Bill Transactions</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Balance: ₦{Number(balance).toLocaleString()}
+          </p>
         </div>
 
         <Card>
@@ -241,9 +263,9 @@ const Bills = () => {
               </label>
               <input
                 type="text"
-                value={formData.accountId}
+                value={formData.accountNumber}
                 onChange={handleChange}
-                name="accountId"
+                name="accountNumber"
                 className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 placeholder="Enter number"
                 maxLength={10}

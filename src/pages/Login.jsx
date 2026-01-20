@@ -55,11 +55,14 @@ const Login = ({ setUser }) => {
 
     try {
       const user = await getUserByEmail(formData.email);
+      if (!user) {
+        toast.error("Check your connection, User not found");
+      }
       if (user && user.password === formData.password) {
         sessionStorage.setItem("userId", user.id.toString());
         setUser(user);
         navigate("/dashboard");
-      } else {
+      } else if(user && user.password !== formData.password) {
         toast.error("Invalid email or password don't match");
       }
     } catch (err) {
