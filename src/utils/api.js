@@ -1,8 +1,8 @@
 // import PinModal from "../components/PinModal";
 
 // const API_URL = "https://mwallet-json-server.onrender.com";
-// const API_URL = "http://localhost:3001";
-const API_URL = "https://mwallet-server-production.up.railway.app";
+const API_URL = "http://localhost:3001";
+// const API_URL = "https://mwallet-server-production.up.railway.app";
 
 export async function getUserByEmail(email) {
   try {
@@ -167,20 +167,20 @@ export async function getAllTransactions() {
   }
 }
 
-export async function getTransactionsByUser(userId) {
-  try {
-    const all = await getAllTransactions();
-    return all.filter(
-      (trans) =>
-        trans.senderId === userId ||
-        trans.receiverId === userId ||
-        trans.userId === userId
-    );
-  } catch (error) {
-    console.error("Error fetching user transactions:", error);
-    return [];
-  }
-}
+// export async function getTransactionsByUser(userId) {
+//   try {
+//     const all = await getAllTransactions();
+//     return all.filter(
+//       (trans) =>
+//         trans.senderId === userId ||
+//         trans.receiverId === userId ||
+//         trans.userId === userId
+//     );
+//   } catch (error) {
+//     console.error("Error fetching user transactions:", error);
+//     return [];
+//   }
+// }
 
 export async function getBanks() {
   try {

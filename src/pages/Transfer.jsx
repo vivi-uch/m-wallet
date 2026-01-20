@@ -156,9 +156,11 @@ const Transfer = () => {
         id: Date.now().toString(),
         senderId: currentUser.id,
         receiverId: receiverUser.id,
+        senderName: currentUser.fullName,
+        receiverName: receiverUser.fullName,
         amount,
         type: "transfer",
-        description: `${receiverUser.fullName}`,
+
         status: "completed",
         date: new Date().toISOString(),
       };
@@ -177,7 +179,7 @@ const Transfer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8">
       <ToastContainer position="top-center" autoClose={4000} />
       {showPin && (
         <PinModal
@@ -189,12 +191,12 @@ const Transfer = () => {
         <div className="mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="text-sm text-gray-600 mb-2"
+            className="text-sm text-gray-600 dark:text-gray-400 mb-2"
           >
             Back
           </button>
-          <h1 className="text-2xl font-bold">Transfer Money</h1>
-          <p className="text-sm text-gray-600">
+          <h1 className="text-2xl font-bold dark:text-white">Transfer Money</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Balance: ₦{Number(balance).toLocaleString()}
           </p>
         </div>
@@ -202,12 +204,14 @@ const Transfer = () => {
         <Card>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-700 mb-1">Bank</label>
+              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+                Bank
+              </label>
               <select
                 name="bank"
                 value={formData.bank}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 required
               >
                 <option value="">Select a bank</option>
@@ -223,16 +227,15 @@ const Transfer = () => {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700 mb-1">
+              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                 Account number
               </label>
               <input
                 name="accountNumber"
                 value={formData.accountNumber}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 placeholder="1234567890"
-                inputMode="numeric"
                 maxLength={10}
                 required
               />
@@ -242,7 +245,9 @@ const Transfer = () => {
                 </p>
               )}
               <div className=" flex justify-between items-center mt-1">
-                <p className="text-sm uppercase mt-1">{accountName}</p>
+                <p className="text-sm uppercase mt-1 text-gray-600 dark:text-gray-400">
+                  {accountName}
+                </p>
                 <select
                   onChange={handleSelectedUserChange}
                   className="text-white bg-purple-600 p-1 rounded-sm text-xs"
@@ -259,16 +264,15 @@ const Transfer = () => {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700 mb-1">
+              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                 Amount (₦)
               </label>
               <input
                 name="amount"
                 value={formData.amount}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 placeholder="0.00"
-                inputMode="decimal"
                 required
               />
               {errors.amount && (
@@ -277,14 +281,14 @@ const Transfer = () => {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700 mb-1">
+              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
                 Note (optional)
               </label>
               <input
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 placeholder="For rent, gift, etc."
               />
             </div>

@@ -148,9 +148,10 @@ const Bills = () => {
         id: Date.now().toString(),
         senderId: currentUser.id,
         receiverId: receiverUser.id,
+        senderName: currentUser.fullName,
+        receiverName: receiverUser.fullName,
         amount,
         type: `${formData.billType}`,
-        description: ` ${receiverUser.fullName}`,
         status: "completed",
         date: new Date().toISOString(),
       };
@@ -172,7 +173,7 @@ const Bills = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8">
       <ToastContainer position="top-center" autoClose={4000} />
       {showPin && (
         <PinModal
@@ -184,23 +185,25 @@ const Bills = () => {
         <div className="mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="text-sm text-gray-600 mb-2"
+            className="text-sm text-gray-600 dark:text-gray-400 mb-2"
           >
             Back
           </button>
-          <h1 className="text-2xl font-bold">Bill Transactions</h1>
+          <h1 className="text-2xl font-bold dark:text-white">Bill Transactions</h1>
         </div>
 
         <Card>
-          <h1 className="text-xl mb-4">Pay Bills</h1>
+          <h1 className="text-xl mb-4 dark:text-white">Pay Bills</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block mb-1">Bill Type</label>
+              <label className="block mb-1 text-gray-700 dark:text-gray-300">
+                Bill Type
+              </label>
               <select
                 value={formData.billType}
                 onChange={handleChange}
                 name="billType"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 required
               >
                 <option value="">Select type</option>
@@ -213,12 +216,14 @@ const Bills = () => {
             </div>
 
             <div>
-              <label className="block mb-1">Bank</label>
+              <label className="block mb-1 text-gray-700 dark:text-gray-300">
+                Bank
+              </label>
               <select
                 name="bank"
                 value={formData.bank}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 required
               >
                 <option value="">Select a bank</option>
@@ -231,19 +236,23 @@ const Bills = () => {
             </div>
 
             <div>
-              <label className="block mb-1">Account/Meter Number</label>
+              <label className="block mb-1 text-gray-700 dark:text-gray-300">
+                Account/Meter Number
+              </label>
               <input
                 type="text"
                 value={formData.accountId}
                 onChange={handleChange}
                 name="accountId"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 placeholder="Enter number"
                 maxLength={10}
                 required
               />
               <div className=" flex justify-between items-center mt-1">
-                <p className="text-sm uppercase mt-1">{accountName}</p>
+                <p className="text-sm uppercase mt-1 text-gray-600 dark:text-gray-400">
+                  {accountName}
+                </p>
                 <select
                   onChange={handleSelectedUserChange}
                   className="text-white bg-purple-600 p-1 rounded-sm text-xs"
@@ -260,13 +269,15 @@ const Bills = () => {
             </div>
 
             <div>
-              <label className="block mb-1">Amount (₦)</label>
+              <label className="block mb-1 text-gray-700 dark:text-gray-300">
+                Amount (₦)
+              </label>
               <input
                 type="number"
                 value={formData.amount}
                 onChange={handleChange}
                 name="amount"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 placeholder="0.00"
                 min="1"
                 required

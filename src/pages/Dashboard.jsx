@@ -65,11 +65,11 @@ const Dashboard = () => {
   // };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="mb-8 sm:mb-6 flex flex-row justify-between items-center">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-md text-gray-700 hidden md:flex">
+          <h1 className="text-2xl font-bold dark:text-white">Dashboard</h1>
+          <p className="text-md text-gray-700 dark:text-gray-400 hidden md:flex">
             Account overview
           </p>
         </div>
@@ -88,7 +88,9 @@ const Dashboard = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <div className="flex gap-3 items-center">
-                <p className="text-sm text-gray-500">Balance</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Balance
+                </p>
                 <button
                   onClick={() => setShowBalance(!showBalance)}
                   className="inline-flex"
@@ -101,7 +103,7 @@ const Dashboard = () => {
                 </button>
               </div>
 
-              <div className="text-2xl sm:text-3xl font-bold">
+              <div className="text-2xl sm:text-3xl font-bold text-black dark:text-white">
                 {showBalance
                   ? "****"
                   : `₦${Number(walletBalance).toLocaleString()}`}
@@ -117,33 +119,38 @@ const Dashboard = () => {
 
         <Card>
           <div className="mb-5 sm:mb-4 flex items-center justify-between">
-            <h3 className="text-md sm:text-lg font-semibold">
+            <h3 className="text-md sm:text-lg font-semibold dark:text-white">
               Transaction history
             </h3>
-            <div className="text-xs sm:text-sm text-gray-600">
+            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
               {transactions.length} items
             </div>
           </div>
 
           {transactions.length === 0 ? (
-            <p className="text-gray-600">No transactions yet.</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              No transactions yet.
+            </p>
           ) : (
             <ul className="space-y-2 sm:space-y-3">
               {visibleTransactions.map((transaction) => {
                 const isDebit =
                   transaction.senderId === sessionStorage.getItem("userId");
+                const descName = isDebit
+                  ? transaction.receiverName
+                  : transaction.senderName;
                 return (
                   <li
                     key={transaction.id}
-                    className="flex items-center justify-between border border-purple-900 rounded p-3"
+                    className="flex items-center justify-between border border-purple-900 rounded p-3 dark:bg-gray-700"
                     // onClick={handleGenerateReceipt(transaction)}
                   >
                     <div>
-                      <div className="text-xs sm:text-sm text-gray-700 font-medium capitalize">
+                      <div className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium capitalize">
                         {transaction.type} payment made
-                        {isDebit ? " to" : " from"} {transaction.description}
+                        {isDebit ? " to" : " from"} {descName}
                       </div>
-                      <div className="text-[10px] sm:text-xs text-gray-500">
+                      <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                         {new Date(transaction.date).toLocaleString()}
                       </div>
                     </div>
