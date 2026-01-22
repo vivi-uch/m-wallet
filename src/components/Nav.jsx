@@ -29,7 +29,7 @@ const Nav = ({ user, setUser, darkMode, toggleDarkMode }) => {
       ];
 
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow-sm">
+    <nav className="bg-white dark:bg-gray-800 shadow-sm border-b border-purple-900/10 ">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link
           to={user ? "/dashboard" : "/"}
@@ -46,7 +46,7 @@ const Nav = ({ user, setUser, darkMode, toggleDarkMode }) => {
             <Link
               key={nav.path}
               to={nav.path}
-              className="text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              className="text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-2xl bg-purple-300 px-4 py-2"
             >
               {nav.label}
             </Link>
