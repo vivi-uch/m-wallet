@@ -32,7 +32,7 @@ const ProtectedRoute = ({ children }) => {
     sessionStorage.removeItem("userId");
     sessionStorage.removeItem("lastActivity");
     toast.info("Session timeout: Please login again", {
-      autoClose: 5000,
+      autoClose: 3000,
     });
     navigate("/login");
     window.location.reload();
@@ -47,8 +47,6 @@ const ProtectedRoute = ({ children }) => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-
-
     timeoutRef.current = setTimeout(() => {
       logout();
     }, SESSION_TIMEOUT);
@@ -63,7 +61,6 @@ const ProtectedRoute = ({ children }) => {
       ? parseInt(savedActivity, 10)
       : Date.now();
 
-    // Set up activity listeners
     const events = [
       "mousedown",
       "mousemove",
@@ -81,7 +78,7 @@ const ProtectedRoute = ({ children }) => {
       if (document.hidden) {
         // Tab is hidden, don't reset activity
       } else {
-        // Tab is visible again, check if session expired
+       
         const now = Date.now();
         const timeSinceLastActivity = now - lastActivityRef.current;
 
