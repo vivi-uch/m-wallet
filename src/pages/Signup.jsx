@@ -114,15 +114,16 @@ const Signup = () => {
       toast.success("Account created. Please login.", user);
       setTimeout(() => navigate("/login"), 800);
     } catch (err) {
-      toast.error("Error creating account");
+      // toast.error("Error creating account, Check your connection");
       console.error(err);
+      toast.error("Error creating account", err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 py-12">
       <ToastContainer position="top-center" autoClose={4000} />
 
       <div className="w-full max-w-md">
@@ -130,10 +131,10 @@ const Signup = () => {
           <div className="bg-purple-600 text-white rounded-md w-12 h-12 mx-auto flex items-center justify-center font-bold">
             MW
           </div>
-          <h1 className="text-2xl font-bold mt-4">Create Account</h1>
+          <h1 className="text-2xl font-bold mt-4 text-black dark:text-white">Create Account</h1>
         </div>
 
-        <Card>
+        <Card className="dark:bg-white">
           <form onSubmit={handleSubmit} className="space-y-4">
             {Inputfields.map((field) => (
               <div key={field.name} className="relative">

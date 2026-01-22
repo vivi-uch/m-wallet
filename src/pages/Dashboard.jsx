@@ -75,7 +75,7 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* <h2 className="text-xl font-semibold mb-4">Hello, {username}!</h2> */}
+       {/* <h2 className="text-xl font-semibold mb-4">Hello, {username}!</h2> */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center md-8 sm:mb-4 text-purple-600">
           <h2 className="text-xl sm:text-2xl font-semibold">
             Hello, {username}!

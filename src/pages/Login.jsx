@@ -55,9 +55,6 @@ const Login = ({ setUser }) => {
 
     try {
       const user = await getUserByEmail(formData.email);
-      if (!user.ok) {
-        toast.error("Check your connection and try again");
-      }
       if (user && user.password === formData.password) {
         sessionStorage.setItem("userId", user.id.toString());
         setUser(user);
@@ -66,25 +63,26 @@ const Login = ({ setUser }) => {
         toast.error("Invalid email or password don't match");
       }
     } catch (err) {
-      toast.error("Error logging in");
-      console.error(err);
+      // toast.error("Error logging in, Check your Connection");
+      console.error(err)
+      toast.error("Error logging in", err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 py-12">
       <ToastContainer position="top-center" autoClose={4000} />
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <div className="bg-purple-600 text-white rounded-md w-12 h-12 mx-auto flex items-center justify-center font-bold">
             MW
           </div>
-          <h1 className="text-2xl font-bold mt-4">Welcome Back</h1>
+          <h1 className="text-2xl font-bold mt-4 text-black dark:text-white">Welcome Back</h1>
         </div>
 
-        <Card>
+        <Card className="dark:bg-white">
           <form onSubmit={handleSubmit} className="space-y-4">
             {Inputfields.map((field) => (
               <div key={field.name} className="relative">

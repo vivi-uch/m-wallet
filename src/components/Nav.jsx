@@ -38,7 +38,7 @@ const Nav = ({ user, setUser, darkMode, toggleDarkMode }) => {
           <div className="bg-purple-600 text-white rounded-md w-10 h-10 flex items-center justify-center font-bold">
             MW
           </div>
-          <span className="font-semibold dark:text-white">M-Wallet</span>
+          <span className="font-semibold text-black dark:text-white">M-Wallet</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-4">
@@ -63,7 +63,7 @@ const Nav = ({ user, setUser, darkMode, toggleDarkMode }) => {
             </button>
           )}
           {user && (
-            <button
+           <button
               onClick={handleLogout}
               className="text-sm text-red-600 hover:text-red-700"
             >
@@ -83,10 +83,10 @@ const Nav = ({ user, setUser, darkMode, toggleDarkMode }) => {
             </button>
           )}
           <button
-            className={`p-2 rounded transition-colors ${darkMode ? "text-white hover:bg-gray-700" : "text-gray-700 hover:bg-gray-100"}`}
+            className={darkMode ? "text-white" : "text-gray-700"}
             onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
           >
+
             {isOpen ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"

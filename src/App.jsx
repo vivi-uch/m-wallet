@@ -132,26 +132,7 @@ function App() {
     return saved ? JSON.parse(saved) : false;
   });
 
-  // Initialize dark class on mount based on localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem("darkMode");
-    let isDark = false;
-    try {
-      isDark = saved ? JSON.parse(saved) : false;
-    } catch  {
-      // If localStorage is corrupted, reset it
-      localStorage.removeItem("darkMode");
-      isDark = false;
-    }
-    
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  // Sync darkMode state with DOM and localStorage whenever it changes
+  
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
