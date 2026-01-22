@@ -14,3 +14,108 @@
 /* add time out session */
 /* fix mobile airtime too */
 /* make sure to finish tomorrow */
+
+/* const SESSION_TIMEOUT = 3 * 60 * 1000; 
+const IDLE_CHECK_INTERVAL = 60000; 
+
+const ProtectedRoute = ({ children }) => {
+  const userId = sessionStorage.getItem("userId");
+  const lastActivityRef = useRef(Date.now());
+  const timeoutRef = useRef(null);
+  const checkIntervalRef = useRef(null);
+  const navigate = useNavigate();
+
+  const logout = useCallback(() => {
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("lastActivity");
+    toast.info("Session timeout: Please login again", {
+      autoClose: 3000,
+    });
+    navigate("/login");
+    window.location.reload();
+  }, [navigate]);
+
+  const resetActivity = useCallback(() => {
+    const now = Date.now();
+    lastActivityRef.current = now;
+    sessionStorage.setItem("lastActivity", now.toString());
+
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      logout();
+    }, SESSION_TIMEOUT);
+  }, [logout]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+  
+    const savedActivity = sessionStorage.getItem("lastActivity");
+    lastActivityRef.current = savedActivity
+      ? parseInt(savedActivity, 10)
+      : Date.now();
+
+    const events = [
+      "mousedown",
+      "mousemove",
+      "keypress",
+      "scroll",
+      "touchstart",
+      "click",
+    ];
+    events.forEach((event) => {
+      document.addEventListener(event, resetActivity, true);
+    });
+
+ 
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Tab is hidden, don't reset activity
+      } else {
+       
+        const now = Date.now();
+        const timeSinceLastActivity = now - lastActivityRef.current;
+
+        if (timeSinceLastActivity >= SESSION_TIMEOUT) {
+          logout();
+        } else {
+          resetActivity();
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+
+    checkIntervalRef.current = setInterval(() => {
+      const now = Date.now();
+      const timeSinceLastActivity = now - lastActivityRef.current;
+
+      if (timeSinceLastActivity >= SESSION_TIMEOUT) {
+        logout();
+      }
+    }, IDLE_CHECK_INTERVAL);
+
+
+    resetActivity();
+
+    return () => {
+      events.forEach((event) => {
+        document.removeEventListener(event, resetActivity, true);
+      });
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      if (checkIntervalRef.current) {
+        clearInterval(checkIntervalRef.current);
+      }
+    };
+  }, [userId, resetActivity, logout]);
+
+  return userId ? children : <Navigate to="/login" />;
+}; */
+
