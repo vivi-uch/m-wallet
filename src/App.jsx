@@ -43,12 +43,12 @@ const ProtectedRoute = ({ children }) => {
     lastActivityRef.current = now;
     sessionStorage.setItem("lastActivity", now.toString());
 
-    // Clear existing timeout
+    
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    // Set new timeout
+
     timeoutRef.current = setTimeout(() => {
       logout();
     }, SESSION_TIMEOUT);
@@ -57,7 +57,7 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     if (!userId) return;
 
-    // Initialize last activity from storage or current time
+  
     const savedActivity = sessionStorage.getItem("lastActivity");
     lastActivityRef.current = savedActivity
       ? parseInt(savedActivity, 10)
@@ -76,7 +76,7 @@ const ProtectedRoute = ({ children }) => {
       document.addEventListener(event, resetActivity, true);
     });
 
-    // Check for visibility changes (tab/window focus)
+ 
     const handleVisibilityChange = () => {
       if (document.hidden) {
         // Tab is hidden, don't reset activity
@@ -95,7 +95,7 @@ const ProtectedRoute = ({ children }) => {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // Periodic check for idle timeout
+
     checkIntervalRef.current = setInterval(() => {
       const now = Date.now();
       const timeSinceLastActivity = now - lastActivityRef.current;
@@ -105,10 +105,9 @@ const ProtectedRoute = ({ children }) => {
       }
     }, IDLE_CHECK_INTERVAL);
 
-    // Set initial timeout
+
     resetActivity();
 
-    // Cleanup
     return () => {
       events.forEach((event) => {
         document.removeEventListener(event, resetActivity, true);
@@ -133,6 +132,26 @@ function App() {
     return saved ? JSON.parse(saved) : false;
   });
 
+  // Initialize dark class on mount based on localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("darkMode");
+    let isDark = false;
+    try {
+      isDark = saved ? JSON.parse(saved) : false;
+    } catch  {
+      // If localStorage is corrupted, reset it
+      localStorage.removeItem("darkMode");
+      isDark = false;
+    }
+    
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  // Sync darkMode state with DOM and localStorage whenever it changes
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -146,11 +165,11 @@ function App() {
     setDarkMode((prev) => !prev);
   };
 
-
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
 
     if (userId) {
+  
       getUserById(userId).then((userData) => {
         if (userData) {
           setUser(userData);

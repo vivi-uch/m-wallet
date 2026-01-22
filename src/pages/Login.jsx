@@ -55,8 +55,8 @@ const Login = ({ setUser }) => {
 
     try {
       const user = await getUserByEmail(formData.email);
-      if (!user) {
-        toast.error("Check your connection, User not found");
+      if (!user.ok) {
+        toast.error("Check your connection and try again");
       }
       if (user && user.password === formData.password) {
         sessionStorage.setItem("userId", user.id.toString());

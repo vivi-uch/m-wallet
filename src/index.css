@@ -1,15 +1,2 @@
 @import "tailwindcss";
 
-/* @custom-variant dark (&:where(.dark, .dark *)); */
-/* @layer variants {
-  @variant dark {
-	&:where(.dark, .dark *)
-  }
-} */
-
-/* maks sure before rurnning local host or pushing it to git, update mine and uche et.c the ones already hosted*/
-/* also add senderName and receiverNames */
-/* add dark and light mode */
-/* add time out session */
-/* fix mobile airtime too DONE*/
-/* make sure to finish tomorrow */

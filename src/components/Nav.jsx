@@ -83,8 +83,9 @@ const Nav = ({ user, setUser, darkMode, toggleDarkMode }) => {
             </button>
           )}
           <button
-            className={darkMode ? "text-white" : "text-gray-700"}
+            className={`p-2 rounded transition-colors ${darkMode ? "text-white hover:bg-gray-700" : "text-gray-700 hover:bg-gray-100"}`}
             onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
           >
             {isOpen ? (
               <svg
