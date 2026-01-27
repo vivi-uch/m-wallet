@@ -28,6 +28,7 @@ const Airtime = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [isError, setIsError] = useState(false);
   const [balance, setBalance] = useState(0); 
+  const [chosenAccount, setChosenAccount] = useState("");
 
   useEffect(() => {
     fetchAllUsers().then((users) => {
@@ -38,7 +39,10 @@ const Airtime = () => {
     const userId = sessionStorage.getItem("userId");
     if (!userId) return;
     getUserById(userId).then((user) => {
-      if (user) setBalance(Number(user.walletBalance || 0));
+      if (user) {
+        setBalance(Number(user.walletBalance || 0));
+        setChosenAccount(user.accounts?.[0]?.accountNumber || "");
+      }
     });
   }, []);
 
@@ -111,7 +115,7 @@ const Airtime = () => {
  
     if (!formData.amount) return toast.error("Enter amount");
     else if (isNaN(amt) || amt <= 0) return toast.error("Enter a valid amount");
-    else if (amt > balance) return toast.error("Insufficient balance");
+    // else if (amt > balance) return toast.error("Insufficient balance");
    
     if (isError) {
       toast.error("Check all fields for errors");
@@ -194,6 +198,12 @@ const Airtime = () => {
         <PinModal
           onConfirm={handlePinConfirm}
           onCancel={() => setShowPin(false)}
+          receiverName = {formData.phone}
+          netName = {formData.network}
+          amount = {`₦ ${formData.amount}`}
+          narration = {`Airtime Purchase`}
+          senderName = {`YOU | ${chosenAccount}`}
+          balance={balance}
         />
       )}
       <div className="max-w-2xl mx-auto">

@@ -58,7 +58,7 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
+      <div className="App font-serif">
         <Nav user={user} setUser={setUser} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <Routes>
           <Route path="/" element={<Splash />} />

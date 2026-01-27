@@ -35,6 +35,7 @@ const Bills = () => {
   const [Allusers, setAllUsers] = useState([]);
   const [isError, setIsError] = useState(false);
   const [balance, setBalance] = useState(0);
+  const [chosenAccount, setChosenAccount] = useState("");
 
   useEffect(() => {
     getBanks().then(setBanks);
@@ -42,7 +43,10 @@ const Bills = () => {
     if (!userId) return;
     
     getUserById(userId).then((user) => {
-      if (user) setBalance(Number(user.walletBalance || 0));
+       if (user) {
+        setBalance(Number(user.walletBalance || 0));
+        setChosenAccount(user.accounts?.[0]?.accountNumber || "");
+      }
     });
     fetchAllUsers().then(setAllUsers);
   }, []);
@@ -194,10 +198,15 @@ const Bills = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8">
       <ToastContainer position="top-center" autoClose={4000} />
-      {showPin && (
+     {showPin && (
         <PinModal
           onConfirm={handlePinConfirm}
           onCancel={() => setShowPin(false)}
+          bankName = {banks.find(bankName => bankName.code === formData.bank)?.name }
+          receiverName = {`${accountName} | ${formData.accountNumber}`}
+          narration = {formData.description}
+          balance={balance}
+         senderName = {`YOU | ${chosenAccount}`}
         />
       )}
       <div className="max-w-2xl mx-auto">

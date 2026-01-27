@@ -30,13 +30,17 @@ const Transfer = () => {
   const [banks, setBanks] = useState([]);
   const [Allusers, setAllUsers] = useState([]);
   const [isError, setIsError] = useState(false);
+  const [chosenAccount, setChosenAccount] = useState("");
 
   useEffect(() => {
     getBanks().then(setBanks);
     const userId = sessionStorage.getItem("userId");
     if (!userId) return;
     getUserById(userId).then((user) => {
-      if (user) setBalance(Number(user.walletBalance || 0));
+      if (user) {
+        setBalance(Number(user.walletBalance || 0));
+        setChosenAccount(user.accounts?.[0]?.accountNumber || "");
+      }
     });
     fetchAllUsers().then(setAllUsers);
   }, []);
@@ -192,6 +196,12 @@ const Transfer = () => {
         <PinModal
           onConfirm={handlePinConfirm}
           onCancel={() => setShowPin(false)}
+          bankName = {banks.find(bankName => bankName.code === formData.bank)?.name }
+          amount = {`₦ ${formData.amount}`}
+          senderName = {`YOU | ${chosenAccount}`}
+          receiverName = {`${accountName} | ${formData.accountNumber}`}
+          narration = {formData.description}
+          balance={balance}
         />
       )}
       <div className="max-w-2xl mx-auto">
@@ -305,6 +315,7 @@ const Transfer = () => {
             </Button>
           </form>
         </Card>
+
       </div>
     </div>
   );
