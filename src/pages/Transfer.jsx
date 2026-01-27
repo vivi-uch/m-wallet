@@ -149,11 +149,15 @@ const Transfer = () => {
 
       await updateUserBalance(
         currentUser.id,
-        `${currentUser.id !== receiverUser.id ? currentUser.walletBalance - amount : currentUser.walletBalance}`
+        currentUser.id !== receiverUser.id
+          ? Number(currentUser.walletBalance || 0) - amount
+          : Number(currentUser.walletBalance || 0)
       );
       await updateUserBalance(
         receiverUser.id,
-        `${currentUser.id !== receiverUser.id ? receiverUser.walletBalance + amount : receiverUser.walletBalance}`
+        currentUser.id !== receiverUser.id
+          ? Number(receiverUser.walletBalance || 0) + amount
+          : Number(receiverUser.walletBalance || 0)
       );
 
       const transaction = {

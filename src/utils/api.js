@@ -106,7 +106,7 @@ export async function updateUserBalance(userId, newBalance) {
     const response = await fetch(`${API_URL}/users/${userId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ walletBalance: newBalance }),
+      body: JSON.stringify({ walletBalance: Number(newBalance) }),
     });
     return response.ok ? await response.json() : null;
   } catch (error) {
