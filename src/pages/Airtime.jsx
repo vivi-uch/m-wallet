@@ -159,10 +159,11 @@ const Airtime = () => {
 
       const transaction = {
         id: Date.now().toString(),
-        userId: currentUser.id,
+        senderId: currentUser.id,
+        senderName: currentUser.fullName,
+        receiverName: formData.phone,
         amount,
         type: "airtime",
-        description: ` ${formData.phone}`,
         status: "completed",
         date: new Date().toISOString(),
       };

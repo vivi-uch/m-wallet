@@ -126,13 +126,13 @@ const Transfer = () => {
       }
 
       const currentUser = await getUserById(userId);
-      if (!currentUser) {
-        toast.error("User not found");
+      if ((currentUser.pin || "") !== enteredPin) {
+        toast.error("Incorrect PIN");
         return;
       }
 
-      if ((currentUser.pin || "") !== enteredPin) {
-        toast.error("Incorrect PIN");
+      if (!currentUser) {
+        toast.error("User not found");
         return;
       }
 
