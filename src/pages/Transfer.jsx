@@ -98,7 +98,7 @@ const Transfer = () => {
     const amt = parseFloat(formData.amount || 0);
     if (!formData.amount) err.amount = "Amount is required";
     else if (isNaN(amt) || amt <= 0) err.amount = "Enter a valid amount";
-    else if (amt > balance) err.amount = "Insufficient balance";
+    else if (amt > balance - 200) err.amount = "Must maintain minimum balance of ₦200";
 
     setErrors(err);
     return Object.keys(err).length === 0;
@@ -137,6 +137,10 @@ const Transfer = () => {
       }
 
       const amount = parseFloat(formData.amount);
+      if (Number(currentUser.walletBalance || 0) - amount < 200) {
+        toast.error("You must keep a minimum balance of ₦200");
+        return;
+      }
       const receiverUser = await getUserByAccount(
         formData.bank,
         formData.accountNumber
