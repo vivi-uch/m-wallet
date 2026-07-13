@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import Card from "../components/Card";
+import Receipt from "../components/Receipt";
 import { getUserById, getAllTransactions, getBanks } from "../utils/api";
 import {
   Eye,
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const [userbank, setUserBank] = useState("");
   const [bankcodes, setBankCodes] = useState();
   const [showBalance, setShowBalance] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   const [currPage, setCurrPage] = useState(1);
   const itemsperPage = 3;
@@ -197,7 +199,8 @@ const Dashboard = () => {
                 return (
                   <div
                     key={transaction.id}
-                    className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-900 rounded-xl hover:border-purple-500/30 dark:hover:border-purple-500/20 transition-colors duration-150"
+                    onClick={() => setSelectedTransaction(transaction)}
+                    className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-900 rounded-xl hover:border-purple-500/30 dark:hover:border-purple-500/20 transition-colors duration-150 cursor-pointer active:scale-[0.99]"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
                       <div
@@ -285,6 +288,13 @@ const Dashboard = () => {
           </div>
         </Card>
       </div>
+
+      {selectedTransaction && (
+        <Receipt
+          transaction={selectedTransaction}
+          onClose={() => setSelectedTransaction(null)}
+        />
+      )}
     </div>
   );
 };
