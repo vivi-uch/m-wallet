@@ -13,6 +13,7 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PinModal from "../components/PinModal";
+import { ArrowLeft, Wallet, Building2, Hash, Banknote, FileEdit, Users, AlertCircle, CheckCircle2 } from "lucide-react";
 
 const Transfer = () => {
   const navigate = useNavigate();
@@ -60,29 +61,33 @@ const Transfer = () => {
 
   const handleSelectedUserChange = (e) => {
     const selectedID = e.target.value;
+    if (!selectedID) return;
+    
     const user = Allusers.find((u) => u.id === selectedID);
 
     setFormData((prev) => ({
       ...prev,
-      bank: user?.accounts[0]?.bankCode || " ",
-      accountNumber: user?.accounts[0]?.accountNumber || " ",
+      bank: user?.accounts?.[0]?.bankCode || "",
+      accountNumber: user?.accounts?.[0]?.accountNumber || "",
     }));
 
-    if (user) {
+    if (user?.accounts?.[0]) {
       findAccountName(
-        user?.accounts[0]?.bankCode,
-        user?.accounts[0]?.accountNumber
+        user.accounts[0].bankCode,
+        user.accounts[0].accountNumber
       );
     }
   };
 
   const findAccountName = async (bankCode, acct) => {
+    setAccountName("Verifying account...");
+    setIsError(false);
     const receiver = await getUserByAccount(bankCode, acct);
     if (receiver) {
       setAccountName(receiver.fullName);
       setIsError(false);
     } else {
-      setAccountName("Account Number don't exist, check beneficiary");
+      setAccountName("Account number does not exist. Check beneficiary.");
       setIsError(true);
     }
   };
@@ -108,7 +113,7 @@ const Transfer = () => {
     e.preventDefault();
     if (!validate()) return;
     if (isError) {
-      toast.error("Check all fields for Error");
+      toast.error("Check all fields for errors");
       return;
     }
     setShowPin(true);
@@ -131,16 +136,12 @@ const Transfer = () => {
         return;
       }
 
-      if (!currentUser) {
-        toast.error("User not found");
-        return;
-      }
-
       const amount = parseFloat(formData.amount);
       if (Number(currentUser.walletBalance || 0) - amount < 200) {
         toast.error("You must keep a minimum balance of ₦200");
         return;
       }
+      
       const receiverUser = await getUserByAccount(
         formData.bank,
         formData.accountNumber
@@ -151,18 +152,15 @@ const Transfer = () => {
         return;
       }
 
-      await updateUserBalance(
-        currentUser.id,
-        currentUser.id !== receiverUser.id
-          ? Number(currentUser.walletBalance || 0) - amount
-          : Number(currentUser.walletBalance || 0)
-      );
-      await updateUserBalance(
-        receiverUser.id,
-        currentUser.id !== receiverUser.id
-          ? Number(receiverUser.walletBalance || 0) + amount
-          : Number(receiverUser.walletBalance || 0)
-      );
+      if (currentUser.id === receiverUser.id) {
+        toast.info("You cannot transfer to your own account", {
+          onClose: () => navigate("/dashboard"),
+        });
+        return;
+      }
+
+      await updateUserBalance(currentUser.id, Number(currentUser.walletBalance || 0) - amount);
+      await updateUserBalance(receiverUser.id, Number(receiverUser.walletBalance || 0) + amount);
 
       const transaction = {
         id: Date.now().toString(),
@@ -175,14 +173,6 @@ const Transfer = () => {
         status: "completed",
         date: new Date().toISOString(),
       };
-
-
-      if (currentUser.id === receiverUser.id) {
-        toast.info("Impossible!, You can't transfer to your own account", {
-          onClose: () => navigate("/dashboard"),
-        });
-        return;
-      }
 
       await addTransaction(transaction);
 
@@ -198,132 +188,217 @@ const Transfer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 px-4 py-8 relative overflow-hidden transition-colors duration-300">
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-purple-500/5 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-3xl pointer-events-none" />
+
       <ToastContainer position="top-center" autoClose={4000} />
+      
       {showPin && (
         <PinModal
           onConfirm={handlePinConfirm}
           onCancel={() => setShowPin(false)}
-          bankName = {banks.find(bankName => bankName.code === formData.bank)?.name }
-          amount = {`₦ ${formData.amount}`}
-          senderName = {`YOU | ${chosenAccount}`}
-          receiverName = {`${accountName} | ${formData.accountNumber}`}
-          narration = {formData.description}
+          bankName={banks.find(b => b.code === formData.bank)?.name}
+          amount={`₦ ${formData.amount}`}
+          senderName={`YOU | ${chosenAccount}`}
+          receiverName={`${accountName} | ${formData.accountNumber}`}
+          narration={formData.description}
           balance={balance}
         />
       )}
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="text-sm text-gray-600 dark:text-gray-400 mb-2"
-          >
-            Back
-          </button>
-          <h1 className="text-2xl font-bold dark:text-white">Transfer Money</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Balance: ₦{Number(balance).toLocaleString()}
-          </p>
+
+      <div className="max-w-xl mx-auto relative z-10 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="space-y-1">
+            <button
+              onClick={() => navigate(-1)}
+              className="group flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors uppercase tracking-wider"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+              <span>Back</span>
+            </button>
+            <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-1">
+              Transfer Money
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-3 bg-linear-to-br from-purple-900 to-indigo-950 text-white px-4 py-3 rounded-2xl shadow-md border border-white/10 self-start sm:self-auto min-w-[180px]">
+            <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-purple-300">
+              <Wallet className="w-4 h-4" />
+            </div>
+            <div className="space-y-0.5">
+              <p className="text-[10px] font-bold text-purple-200/60 uppercase tracking-wider">Available Balance</p>
+              <p className="text-base font-bold font-mono tracking-tight">
+                ₦{Number(balance).toLocaleString()}
+              </p>
+            </div>
+          </div>
         </div>
 
-        <Card>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
-                Bank
+        <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-xl rounded-2xl p-6 sm:p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
+                Recent Beneficiaries
               </label>
-              <select
-                name="bank"
-                value={formData.bank}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                required
-              >
-                <option value="">Select a bank</option>
-                {banks.map((bank) => (
-                  <option key={bank.code} value={bank.code} name="bank">
-                    {bank.name}
-                  </option>
-                ))}
-              </select>
-              {errors.bank && (
-                <p className="text-sm text-red-600 mt-1">{errors.bank}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
-                Account number
-              </label>
-              <input
-                name="accountNumber"
-                value={formData.accountNumber}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                placeholder="1234567890"
-                maxLength={10}
-                required
-              />
-              {errors.accountNumber && (
-                <p className="text-sm text-red-600 mt-1">
-                  {errors.accountNumber}
-                </p>
-              )}
-              <div className=" flex justify-between items-center mt-1">
-                <p className="text-sm uppercase mt-1 text-gray-600 dark:text-gray-400">
-                  {accountName}
-                </p>
+              <div className="relative flex items-center">
+                <div className="absolute left-3.5 pointer-events-none">
+                  <Users className="w-4 h-4 text-slate-400" />
+                </div>
                 <select
                   onChange={handleSelectedUserChange}
-                  className="text-white bg-purple-600 p-1 rounded-sm text-xs"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950/40 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 text-sm appearance-none cursor-pointer"
                 >
-                  <option value="">Select Beneficiary</option>
-
-                  {Allusers?.map((user) => (
-                    <option key={user.id} value={user.id} className="uppercase">
-                      {user.fullName}
+                  <option value="">Select saved beneficiary (Optional)</option>
+                  {Allusers.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.fullName} ({u.accounts?.[0]?.bankCode})
                     </option>
                   ))}
                 </select>
+                <div className="absolute right-3.5 pointer-events-none border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-400 w-0 h-0" />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
+                  Destination Bank
+                </label>
+                <div className="relative flex items-center">
+                  <div className="absolute left-3.5 pointer-events-none">
+                    <Building2 className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <select
+                    name="bank"
+                    value={formData.bank}
+                    onChange={handleChange}
+                    className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950/40 text-slate-900 dark:text-slate-100 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 text-sm appearance-none cursor-pointer ${
+                      errors.bank ? "border-red-500 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 dark:border-slate-800"
+                    }`}
+                    required
+                  >
+                    <option value="">Select bank</option>
+                    {banks.map((bank) => (
+                      <option key={bank.code} value={bank.code}>
+                        {bank.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3.5 pointer-events-none border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-400 w-0 h-0" />
+                </div>
+                {errors.bank && (
+                  <p className="text-xs font-medium text-red-500 mt-1">{errors.bank}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
+                  Account Number
+                </label>
+                <div className="relative flex items-center">
+                  <div className="absolute left-3.5 pointer-events-none">
+                    <Hash className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <input
+                    name="accountNumber"
+                    type="text"
+                    pattern="\d*"
+                    maxLength={10}
+                    placeholder="10-digit number"
+                    value={formData.accountNumber}
+                    onChange={handleChange}
+                    className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950/40 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 text-sm ${
+                      errors.accountNumber ? "border-red-500 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 dark:border-slate-800"
+                    }`}
+                    required
+                  />
+                </div>
+                {errors.accountNumber && (
+                  <p className="text-xs font-medium text-red-500 mt-1">{errors.accountNumber}</p>
+                )}
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
-                Amount (₦)
+            {accountName && (
+              <div className={`p-3 rounded-xl border flex items-center gap-2.5 text-xs font-medium tracking-wide transition-all ${
+                isError 
+                  ? "bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400" 
+                  : accountName === "Verifying account..."
+                  ? "bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400"
+                  : "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-400"
+              }`}>
+                {isError ? (
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                ) : accountName === "Verifying account..." ? (
+                  <span className="w-3.5 h-3.5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin shrink-0" />
+                ) : (
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                )}
+                <span className="truncate uppercase">{accountName}</span>
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
+                Transfer Amount (₦)
               </label>
-              <input
-                name="amount"
-                value={formData.amount}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                placeholder="0.00"
-                required
-              />
-              {errors.amount && (
-                <p className="text-sm text-red-600 mt-1">{errors.amount}</p>
+              <div className="relative flex items-center">
+                <div className="absolute left-3.5 pointer-events-none">
+                  <Banknote className="w-4 h-4 text-slate-400" />
+                </div>
+                <input
+                  name="amount"
+                  type="number"
+                  step="any"
+                  placeholder="0.00"
+                  value={formData.amount}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950/40 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 text-sm font-mono ${
+                    errors.amount ? "border-red-500 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 dark:border-slate-800"
+                  }`}
+                  required
+                />
+              </div>
+              {errors.amount ? (
+                <p className="text-xs font-medium text-red-500 mt-1">{errors.amount}</p>
+              ) : (
+                <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                  Note: A minimum wallet balance of ₦200 must be retained.
+                </p>
               )}
             </div>
 
-            <div>
-              <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
-                Note (optional)
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
+                Narration / Description
               </label>
-              <input
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                placeholder="For rent, gift, etc."
-              />
+              <div className="relative flex items-center">
+                <div className="absolute left-3.5 top-3 pointer-events-none">
+                  <FileEdit className="w-4 h-4 text-slate-400" />
+                </div>
+                <textarea
+                  name="description"
+                  rows={2}
+                  placeholder="What is this transfer for? (Optional)"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-950/40 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 text-sm resize-none"
+                />
+              </div>
             </div>
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Processing..." : "Send"}
-            </Button>
+            
+            <div className="pt-2">
+              <Button
+                type="submit"
+                disabled={isLoading || isError || accountName === "Verifying account..."}
+                className="w-full bg-linear-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-purple-600/20 hover:from-purple-700 hover:to-indigo-700 hover:shadow-purple-700/30 disabled:opacity-40 disabled:pointer-events-none transition-all duration-200 text-sm flex items-center justify-center gap-2"
+              >
+                Proceed to Verification
+              </Button>
+            </div>
           </form>
         </Card>
-
       </div>
     </div>
   );

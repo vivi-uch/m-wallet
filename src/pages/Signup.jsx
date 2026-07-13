@@ -2,32 +2,60 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Button from "../components/Button";
 import Card from "../components/Card";
-// import { ToastComponent } from "../components";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { createUser, detectNetwork } from "../utils/api";
+import {
+  Eye,
+  EyeOff,
+  Wallet,
+  Smartphone,
+  ShieldCheck,
+  Mail,
+  User,
+  Lock,
+  Sparkles,
+} from "lucide-react";
 
 const Inputfields = [
-  { name: "fullName", label: "Full name", placeholder: "John Doe" },
-  { name: "email", label: "Email", placeholder: "john@example.com" },
-  { name: "phone", label: "Phone", placeholder: "08012345678" },
+  {
+    name: "fullName",
+    label: "Full Name",
+    placeholder: "John Doe",
+    icon: <User className="w-4 h-4 text-slate-400" />,
+  },
+  {
+    name: "email",
+    label: "Email Address",
+    placeholder: "john@example.com",
+    icon: <Mail className="w-4 h-4 text-slate-400" />,
+  },
+  {
+    name: "phone",
+    label: "Phone Number",
+    placeholder: "08012345678",
+    icon: <Smartphone className="w-4 h-4 text-slate-400" />,
+  },
   {
     name: "password",
     label: "Password",
-    placeholder: "Password",
+    placeholder: "Min. 6 characters",
     type: "password",
+    icon: <Lock className="w-4 h-4 text-slate-400" />,
   },
   {
     name: "confirmPassword",
-    label: "Confirm",
-    placeholder: "Confirm password",
+    label: "Confirm Password",
+    placeholder: "Repeat your password",
     type: "password",
+    icon: <Lock className="w-4 h-4 text-slate-400" />,
   },
   {
     name: "pin",
     label: "Security PIN",
     placeholder: "4-digit PIN",
     type: "password",
+    icon: <ShieldCheck className="w-4 h-4 text-slate-400" />,
   },
 ];
 
@@ -61,7 +89,6 @@ const Signup = () => {
   };
 
   const handleChange = (e) => {
-    // const err = {};
     const { name, value } = e.target;
     setFormData((prevUserdata) => ({ ...prevUserdata, [name]: value }));
     setErrors((prevUserdata) => ({ ...prevUserdata, [name]: "" }));
@@ -88,8 +115,8 @@ const Signup = () => {
     if (!formData.fullName.trim()) err.fullName = "Name is required";
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
       err.email = "Valid email required";
-    if (!formData.phone.trim() || !formData.phone.length === 11)
-      err.phone = "Phone is required and should be 11 digits";
+    if (!formData.phone.trim() || formData.phone.length !== 11)
+      err.phone = "Phone must be exactly 11 digits";
     if (!formData.password || formData.password.length < 6)
       err.password = "Password min 6 chars";
     if (formData.password !== formData.confirmPassword)
@@ -111,131 +138,156 @@ const Signup = () => {
     try {
       const { confirmPassword: _, ...user } = formData;
       await createUser(user);
-      toast.success("Account created. Please login.", user);
+      toast.success("Account created successfully!");
       setTimeout(() => navigate("/login"), 800);
     } catch (err) {
-      // toast.error("Error creating account, Check your connection");
       console.error(err);
-      toast.error("Error creating account", err.message);
+      toast.error(err.message || "Error creating account");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const getNetworkBadgeStyles = (net) => {
+    switch (net?.toUpperCase()) {
+      case "MTN":
+        return "bg-amber-500/10 text-amber-600 border border-amber-500/20";
+      case "AIRTEL":
+        return "bg-rose-500/10 text-rose-600 border border-rose-500/20";
+      case "GLO":
+        return "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20";
+      case "9MOBILE":
+        return "bg-teal-500/10 text-teal-600 border border-teal-500/20";
+      case "INVALID NUMBER":
+        return "bg-red-500/10 text-red-600 border border-red-500/20";
+      default:
+        return "hidden";
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden transition-colors duration-300">
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+
       <ToastContainer position="top-center" autoClose={4000} />
 
-      <div className="w-full max-w-md">
-        <div className="text-center mb-6">
-          <div className="bg-purple-600 text-white rounded-md w-12 h-12 mx-auto flex items-center justify-center font-bold">
-            MW
+      <div className="w-full max-w-lg relative z-10">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-linear-to-tr from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30 mb-4 transform hover:scale-105 transition-transform duration-200">
+            <Wallet className="w-7 h-7" />
           </div>
-          <h1 className="text-2xl font-bold mt-4 text-black dark:text-white">Create Account</h1>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+            Create Your Account
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+            Join M-Wallet for simple, secure, and reliable transfers.
+          </p>
         </div>
 
-        <Card className="dark:bg-white">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {Inputfields.map((field) => (
-              <div key={field.name} className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {field.label}
-                </label>
-                <input
-                  name={field.name}
-                  type={
-                    field.type === "password"
-                      ? showPassword[field.name]
-                        ? "text"
-                        : "password"
-                      : field.type || "text"
-                  }
-                  placeholder={field.placeholder}
-                  value={formData[field.name]}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                  maxLength={
-                    field.name === "phone" ? 11 : field.name === "pin" ? 4 : 50
-                  }
-                />
-                {field.type === "password" && (
-                  <button
-                    type="button"
-                    onClick={() => handleToggleShowPassword(field.name)}
-                    className="ml-2 text-sm text-purple-600 absolute right-4 top-8"
-                  >
-                    {showPassword[field.name] ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                )}
-                {field.name === "phone" && (
-                  <p
-                    className={
-                      network === "MTN"
-                        ? "text-yellow-500 text-sm mt-1"
-                        : network === "AIRTEL"
-                        ? "text-red-500 text-sm mt-1"
-                        : network === "GLO"
-                        ? "text-green-600 text-sm mt-1"
-                        : "text-green-700 text-sm mt-1"
-                    }
-                  >
-                    {network}
-                  </p>
-                )}
-                {errors[field.name] && (
-                  <p className="text-sm text-red-600 mt-1">
-                    {errors[field.name]}
-                  </p>
-                )}
-              </div>
-            ))}
+        <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-xl rounded-2xl p-6 sm:p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {Inputfields.map((field) => (
+                <div
+                  key={field.name}
+                  className={`space-y-1.5 ${field.name === "fullName" || field.name === "email" ? "sm:col-span-2" : ""}`}
+                >
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
+                    {field.label}
+                  </label>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Creating..." : "Sign Up"}
-            </Button>
+                  <div className="relative flex items-center">
+                    <div className="absolute left-3.5 pointer-events-none">
+                      {field.icon}
+                    </div>
+
+                    <input
+                      name={field.name}
+                      type={
+                        field.type === "password"
+                          ? showPassword[field.name]
+                            ? "text"
+                            : "password"
+                          : field.type || "text"
+                      }
+                      placeholder={field.placeholder}
+                      value={formData[field.name]}
+                      onChange={handleChange}
+                      className={`w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-slate-950/40 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200 text-sm ${
+                        errors[field.name]
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                          : "border-slate-200 dark:border-slate-800"
+                      }`}
+                      required
+                      maxLength={
+                        field.name === "phone"
+                          ? 11
+                          : field.name === "pin"
+                            ? 4
+                            : 50
+                      }
+                    />
+
+                    {field.type === "password" && (
+                      <button
+                        type="button"
+                        onClick={() => handleToggleShowPassword(field.name)}
+                        className="absolute right-3 p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                      >
+                        {showPassword[field.name] ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    )}
+                  </div>
+
+                  {field.name === "phone" && network && (
+                    <div className="pt-0.5">
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide uppercase ${getNetworkBadgeStyles(network)}`}
+                      >
+                        <Sparkles className="w-3 h-3" /> {network}
+                      </span>
+                    </div>
+                  )}
+
+                  {errors[field.name] && (
+                    <p className="text-xs font-medium text-red-500 dark:text-red-400 mt-1 animate-pulse">
+                      {errors[field.name]}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-linear-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-purple-600/20 hover:from-purple-700 hover:to-indigo-700 hover:shadow-purple-700/30 disabled:opacity-50 disabled:pointer-events-none transition-all duration-200 text-sm flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  "Create Account"
+                )}
+              </Button>
+            </div>
           </form>
 
-          <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-            <Link to="/login" className="text-purple-600">
-              Login
-            </Link>
+          <div className="mt-6 text-center border-t border-slate-100 dark:border-slate-800/80 pt-5">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="font-semibold text-purple-600 dark:text-purple-400 hover:underline"
+              >
+                Sign In
+              </Link>
+            </p>
           </div>
         </Card>
       </div>
